@@ -42,7 +42,6 @@ export class LoginPage extends BasePage {
         catch (error) {
             await this.invalidCredentials.isVisible();
             throw new Error("Failed with Invalid Credentials");
-
         }
 
     }
