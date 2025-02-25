@@ -19,7 +19,7 @@ loginTestData.tests.forEach((testData) => {
 
     }
     catch (error) {
-      if (testData.mustFail && "errorMessage" in testData && error.message.includes(testData.errorMessage)) {
+      if (testData.mustFail && "errorMessages" in testData && error.message.includes(testData.errorMessages)) {
         console.log('Test failed as expected:', error.message);
         return;
       }
