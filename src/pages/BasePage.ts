@@ -30,6 +30,14 @@ export class BasePage {
 
   async gotoPropertiesPage() {
     await this.propertiesLink.click();
+    try {
+      await this.page.waitForURL('**/properties', { timeout: 5000 });
+    }
+    catch (error) {
+      // Code to verify the Properties Page navigation failure
+      throw new Error("Failed to navigate to Properties page");
+
+    }
   }
 
   async gotoAboutPage() {
