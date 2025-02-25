@@ -5,12 +5,10 @@ import { DashboardBasePage } from "../pages/DashboardBasePage";
 import { UserDashboardPage } from "../pages/UserDashboardPage";
 import { AdminDashboardPage } from "../pages/AdminDashboardPage";
 import { AgentDashboardPage } from "../pages/AgentDashboardPage";
-import assert, { throws } from "assert";
 import { RegisterPage } from "../pages/RegisterPage";
-import { error } from "console";
 import { SettingsPage } from "../pages/SettingsPage";
 
-export class UserActions {
+export class UsersAction {
   protected page: Page;
   private mode: "ui" | "api";
   private loginPage: LoginPage;
@@ -140,7 +138,7 @@ export class UserActions {
     }
   }
 
-  async verifyErroMessages(errorMessages: string[]) {
+  async verifyRegisterErrorMessages(errorMessages: string[]) {
     let errorMsgDiff = this.registerPage.visibleErrors.filter(item => !errorMessages.includes(item));
     if (errorMsgDiff.length) {
       throw new Error("The following expected error messages were missing :" + errorMsgDiff);
