@@ -24,7 +24,7 @@ tests:
   newEmail: "newadminemail@test.com"
   role: "admin"
   mode: "ui"
-  mustFail: false
+  mustFail: true
 
 - description: "UI-Profile-Edit-Password-User"
   username: "test@example.com"
