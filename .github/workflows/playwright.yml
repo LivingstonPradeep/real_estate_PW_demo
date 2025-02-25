@@ -1,0 +1,62 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+  pull_request:
+    branches:
+      - main
+      - dev
+      - staging
+
+jobs:
+  test:
+    name: Run Playwright Tests (${{ matrix.env }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [dev, staging, prod-clone]
+
+    env:
+      BASE_URL: ${{ secrets[matrix.env]_BASE_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          BASE_URL: ${{ secrets[matrix.env]_BASE_URL }}
+
+      - name: Upload test artifacts (screenshots, videos, traces)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-artifacts-${{ matrix.env }}
+          path: test-results/
+          retention-days: 7
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report-${{ matrix.env }}
+          path: playwright-report/
+          retention-days: 7
