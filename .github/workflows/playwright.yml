@@ -30,17 +30,17 @@ jobs:
         run: curl --fail http://localhost:5173 || (cat demo-app/app.log && exit 1)
 
       - name: Install Playwright Dependencies and Run Tests
-        run: 
+        run: |
+          echo "Current directory: $(pwd)"  # Print the current working directory
+          ls -lah  # List all files to confirm we're in the right repo
           npm install
           npx playwright install --with-deps
           npm install -g allure-commandline --save-dev
-          npx playwright test
+
+      - name: Run Playwright Tests
+        run: npx playwright test --reporter=line,allure-playwright
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:5173
-      # - name: Run Playwright Tests
-      #   run: npx playwright test
-      #   env:
-      #     PLAYWRIGHT_BASE_URL: http://localhost:5173
 
       - name: Generate Allure Report
         run: |
