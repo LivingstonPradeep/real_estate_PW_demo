@@ -2,7 +2,7 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, ]
   pull_request:
     branches: [main]
 
@@ -24,18 +24,16 @@ jobs:
           git clone https://github.com/Aviv-public/aviv-qa-technical-test.git demo-app
           cd demo-app
           npm install
-
-      - name: Start Demo Application
-        run: |
-          cd demo-app
-          nohup npm run dev > app.log 2>&1 &  # Run the app in the background
-          sleep 10  # Give the server time to start
+          npm run dev &  # Start the app in the background
 
       - name: Verify Application is Running
         run: curl --fail http://localhost:5173 || (cat demo-app/app.log && exit 1)
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Install Playwright Dependencies
+        run: 
+          npm install
+          npx playwright install --with-deps
+          npm install -g allure-commandline --save-dev
 
       - name: Run Playwright Tests
         run: npx playwright test
