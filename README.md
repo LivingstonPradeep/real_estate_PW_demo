@@ -171,6 +171,15 @@ npx playwright test --workers=4
 
 ## Continuous Integration
 
+- The GitHub Actions CI/CD pipeline is designed to **first set up the target application** before running the UI tests.
+- CI/CD pipelines execute tests on GitHub Actions.
+- Test execution is dynamic based on environment variables.
+- Run tests by tags in different environments using:
+  ```sh
+  npx playwright test --grep "@priority" --project=Realestate_Demo
+  ```
+- Reports are deployed and stored as artifacts for analysis.
+
 - CI/CD pipelines execute tests on GitHub Actions.
 - Test execution is dynamic based on environment variables.
 - Run tests by tags in different environments using:
