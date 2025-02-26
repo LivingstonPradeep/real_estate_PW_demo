@@ -2,7 +2,7 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, ]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -35,6 +35,7 @@ jobs:
           ls -lah  # List all files to confirm we're in the right repo
           npm install
           npx playwright install chromium
+          npm install -g allure-commandline --save-dev
 
       - name: Run Playwright Tests
         run: npx playwright test --reporter=line,allure-playwright
