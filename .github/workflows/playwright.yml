@@ -2,31 +2,16 @@ name: Playwright Tests
 
 on:
   push:
-    branches:
-      - main
-      - dev
-      - staging
+    branches: [main]
   pull_request:
-    branches:
-      - main
-      - dev
-      - staging
+    branches: [main]
 
 jobs:
   test:
-    name: Run Playwright Tests (${{ matrix.env }})
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        env: [dev, staging, prod-clone]
-
-    env:
-      BASE_URL: ${{ secrets[matrix.env]_BASE_URL }}
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -34,29 +19,45 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Clone & Setup Demo Application
+        run: |
+          git clone https://github.com/Aviv-public/aviv-qa-technical-test.git demo-app
+          cd demo-app
+          npm install
+          npm run dev &  # Start the app in the background
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+      - name: Verify Application is Running
+        run: curl --fail http://localhost:5173 || (cat demo-app/app.log && exit 1)
 
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Install Playwright Dependencies
+        run: |
+          echo "Current directory: $(pwd)"  # Print the current working directory
+          ls -lah  # List all files to confirm we're in the right repo
+          npm install
+          npx playwright install chromium
+          npm install -g allure-commandline --save-dev
+
+      - name: Run Playwright Tests
+        run: npx playwright test --reporter=line,allure-playwright
         env:
-          BASE_URL: ${{ secrets[matrix.env]_BASE_URL }}
+          PLAYWRIGHT_BASE_URL: http://localhost:5173
 
-      - name: Upload test artifacts (screenshots, videos, traces)
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: playwright-artifacts-${{ matrix.env }}
-          path: test-results/
-          retention-days: 7
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean -o allure-report
 
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Deploy Allure Report to GitHub Pages
+        if: success() || failure()
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          name: playwright-report-${{ matrix.env }}
-          path: playwright-report/
-          retention-days: 7
+          branch: gh-pages
+          folder: allure-report 
+          clean: true
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Upload Allure Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 7 
