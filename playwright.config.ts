@@ -40,6 +40,7 @@ export default defineConfig({
         baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173/",
         headless: true,
         screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
        },
     },
 
