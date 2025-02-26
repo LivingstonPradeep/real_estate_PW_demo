@@ -29,13 +29,12 @@ jobs:
       - name: Verify Application is Running
         run: curl --fail http://localhost:5173 || (cat demo-app/app.log && exit 1)
 
-      - name: Install Playwright Dependencies and Run Tests
+      - name: Install Playwright Dependencies
         run: |
           echo "Current directory: $(pwd)"  # Print the current working directory
           ls -lah  # List all files to confirm we're in the right repo
           npm install
-          npx playwright install --with-deps
-          npm install -g allure-commandline --save-dev
+          npx playwright install chromium
 
       - name: Run Playwright Tests
         run: npx playwright test --reporter=line,allure-playwright
@@ -45,7 +44,6 @@ jobs:
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
-          allure serve allure-results
 
       - name: Upload Allure Report as Artifact
         uses: actions/upload-artifact@v4
