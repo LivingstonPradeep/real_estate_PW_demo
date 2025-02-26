@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
 import { UsersAction } from "../src/action/UsersAction";
-import { getTestData } from "./fixtures/testData";
+import { getTestData } from "../utilities/testData";
+import { test } from "./fixtures/test-setup";
 
 const loginTestData = getTestData("test-data/login.yaml");
 
